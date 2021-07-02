@@ -1,0 +1,15 @@
+require(sf)
+p1 = read_sf('osm_data/leisure-park-osm_multipolygons.gpkg')
+p2 = read_sf('osm_data/leisure-park-osm_polygons.gpkg')
+parks = rbind(p1[c('osm_id','name')],p2[c('osm_id','name')])
+p_centroids = st_centroid(parks)
+st_write(p_centroids,'osm_data/centroides_parques.geojson')
+require(leaflet)
+map = leaflet() %>% addProviderTiles(providers$OpenStreetMap)
+map = map %>% addCircleMarkers(data=p_centroids)
+require(htmlwidgets)
+saveWidget(map,'osm_data/parques_centroides.html')
+map
+map = leaflet() %>% addProviderTiles(providers$OpenStreetMap)
+map = map %>% addPolygons(data=p2)
+map
